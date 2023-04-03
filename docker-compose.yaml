@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+
+  db:
+    image: postgres:14.6-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      #докер берет переменные окружения из .env
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - diploma_pg_data_1:/var/lib/postgresql/data/ #здесь записываем в том данные
+
+    healthcheck: #проверка того, что у нас приложение здорово, принимает пользователя и базу
+      test: pg_isready -U ${POSTGRES_USER} -d {POSTGRES_DB}
+      timeout: 3s #даем время прогрузиться
+      retries: 10
+      interval: 3s
+
+volumes:
+  diploma_pg_data_1: #здесь мы создаем том

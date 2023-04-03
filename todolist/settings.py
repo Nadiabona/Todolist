@@ -11,32 +11,39 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+from envparse import env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent #дает абсоютный путь и поднимается выше на два уровня
+ENV_PATH = BASE_DIR.joinpath('.env') # env.лежит прямо в todolist (если надо выше, надо поставить после BASE_DIR.parent.
+if ENV_PATH.is_file():
+    env.read_envfile(ENV_PATH)
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-gv2xo$uks1%3#ox3_jo$h6w-cg9ra@o1%wc)0ej8&!ii+3%zf&'
+#SECRET_KEY = 'django-insecure-gv2xo$uks1%3#ox3_jo$h6w-cg9ra@o1%wc)0ej8&!ii+3%zf&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+SECRET_KEY = env.str('SECRET_KEY', default = 'test')
 
-ALLOWED_HOSTS = []
+DEBUG = env.bool('DEBUG', default = False)
 
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default= ['*']) #example - '127.0.0.1'
 
 # Application definition
 
 INSTALLED_APPS = [
+    #Django apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #Third party apps
+    #First party apps
+    'todolist.core',
+
 ]
 
 MIDDLEWARE = [
@@ -69,14 +76,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'todolist.wsgi.application'
 
+AUTH_USER_MODEL = 'core.User'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env.str('POSTGRES_DB'),
+        'USER':env.str('POSTGRES_USER'),
+        'PASSWORD': env.str('POSTGRES_PASSWORD'),
+        'HOST': env.str('POSTGRES_HOST', default = '127.0.0.1'),
+        'PORT':env.int('POSTGRES_PORT', default = 5432),
+
     }
 }
 
@@ -103,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'
 
