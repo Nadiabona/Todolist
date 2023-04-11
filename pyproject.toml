@@ -11,11 +11,35 @@ django = "4.0.1"
 djando = "^0.2"
 envparse = "^0.2.0"
 psycopg2-binary = "^2.9.5"
+isort = "^5.12.0"
+gunicorn = "^20.1.0"
 
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.2.1"
+django-extensions = "^3.2.1"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+multi_line_output = 3
+line_length = 88
+include_trailing_comma = true
+use_parentheses = true
+
+skip_glob = [
+  '**/migratioins/**',
+  'git',
+  'github',
+  '.venv',
+  'deploy',
+]
+
+combine_as_imports = true
+combine_star = true
+known_first_party = 'todolist'
+
+[tool.black]
+line_length = 88
