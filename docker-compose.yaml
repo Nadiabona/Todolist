@@ -40,7 +40,7 @@ services:
     volumes:
       - ./core:/opt/core
       - ./todolist:/opt/todolist
-      #- django_static:/opt/static
+      - django_static:/opt/static
   frontend:
     image: sermalenk/skypro-front:lesson-34
     ports:
@@ -48,10 +48,10 @@ services:
     depends_on:
       api:
         condition: service_started
-#    volumes:
-#       - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf
-#       - django_static:/usr/share/nginx/html/static
+    volumes:
+       - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf #пробрасыаем тот путь, откуда мы его забрали
+       - django_static:/usr/share/nginx/html/static #сюда мы положим статику
 
 volumes:
   diploma_pg_data_1: #здесь мы создаем том
- # django_static:
+  django_static:
