@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:14.6
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      #докер берет переменные окружения из .env
+    volumes:
+      - diploma_pg_12_data_1:/var/lib/postgresql/data/ #здесь записываем в том данные
+
+    healthcheck: #проверка того, что у нас приложение здорово, принимает пользователя и базу
+      test: pg_isready -U ${POSTGRES_USER} -d {POSTGRES_DB}
+      timeout: 3s #даем время прогрузиться
+      retries: 10
+      interval: 3s
+#делаем сборку
+  api:
+    image: /nadiabona/diploma_12:latest
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+
+    volumes:
+      - django_static:/opt/static
+  frontend:
+    image: sermalenk/skypro-front:lesson-34
+    ports:
+      - "8012:80"
+    depends_on:
+      api:
+        condition: service_started
+    volumes:
+       - ./nginx.conf:/etc/nginx/conf.d/default.conf #пробрасыаем тот путь, откуда мы его забрали
+       - django_static:/usr/share/nginx/html/static #сюда мы положим статику
+
+volumes:
+  diploma_pg_12_data_1: #здесь мы создаем том
+  django_static:
