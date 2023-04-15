@@ -18,7 +18,7 @@ services:
       interval: 3s
 #делаем сборку
   api:
-    image: /nadiabona/diploma_12:latest
+    image: nadiabona/diploma_12:latest
     env_file: .env
     depends_on:
       db:
@@ -29,7 +29,7 @@ services:
   frontend:
     image: sermalenk/skypro-front:lesson-34
     ports:
-      - "8012:80"
+      - "80:80"
     depends_on:
       api:
         condition: service_started
