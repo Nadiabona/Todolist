@@ -4,7 +4,7 @@ on:
   push:
     branches-ignore:
       - main
-      - branch-1
+      - branch-2
 
 jobs:
   build:
