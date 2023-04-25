@@ -18,6 +18,7 @@ services:
       retries: 10
       interval: 3s
 #делаем сборку
+
   api:
     build: .
     env_file: .env
@@ -42,7 +43,7 @@ services:
       - ./todolist:/opt/todolist
       - django_static:/opt/static
   frontend:
-    image: sermalenk/skypro-front:lesson-34
+    image: sermalenk/skypro-front:lesson-35
     ports:
       - "80:80"
     depends_on:
