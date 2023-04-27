@@ -11,27 +11,18 @@ from rest_framework.permissions import IsAuthenticated
 
 from todolist.core.models import User
 from todolist.core.serializers import (
-    CreateUserSerializer,
-    ProfileSerializer,
-    LoginSerializer,
-)
-
+    CreateUserSerializer, ProfileSerializer, LoginSerializer, UpdatePasswordSerializer)
 
 class SignUpView(GenericAPIView):
-    serializer_class = CreateUserSerializer, ProfileSerializer
-
+    serializer_class = CreateUserSerializer
     def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        serializer: Serializer = self.get_serializer(
-            data=request.data
-        )  # то, что прислали нам в запросе
+        serializer: Serializer = self.get_serializer(data=request.data)
+        # то, что прислали нам в запросе
         serializer.is_valid(raise_exception=True)
 
-        user = User.objects.create_user(
-            **serializer.data
-        )  # чтобы в дату попал пароль, мы в сериализаторе говорим, чтоы readonly = False
+        user = User.objects.create_user(**serializer.data)  # чтобы в дату попал пароль, мы в сериализаторе говорим, чтоы readonly = False
 
         return Response(ProfileSerializer(user).data, status=status.HTTP_201_CREATED)
-
 
 class LoginView(GenericAPIView):
     serializer_class = LoginSerializer
@@ -54,7 +45,6 @@ class LoginView(GenericAPIView):
 
         return Response(ProfileSerializer(user).data)
 
-
 class ProfileView(RetrieveUpdateDestroyAPIView):
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
@@ -65,3 +55,26 @@ class ProfileView(RetrieveUpdateDestroyAPIView):
     def delete(self, request: Request, *args, **kwargs) -> Response:
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class UpdatePasswordView(GenericAPIView):
+    serializer_class = UpdatePasswordSerializer
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request: Request, *args: Any, **kwargs: Any) -> Response: #не patch, потому что нам надо обновить сущность полностью
+        serializer: Serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user: User = request.user
+
+        if not user.check_password(serializer.validated_data['old_password']):
+            raise AuthenticationFailed('The rassword is not correct')
+
+        user.set_password(serializer.validated_data['new_password'])
+        user.save(update_fields = ['password'])
+
+        return Response(serializer.data)
+
+
+
+
+

@@ -7,7 +7,7 @@ from typing import Any
 class PasswordField(serializers.CharField):
     def __init__(self, **kwargs: Any) -> None:
         kwargs["style"] = {
-            "input_type": "password"
+            "style": "password"
         }  # мы тут давем html стиль, чтобы пароль был скрытым при вводе
         kwargs.setdefault("write_only", True)
         super().__init__(**kwargs)
