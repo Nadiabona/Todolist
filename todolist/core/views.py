@@ -1,6 +1,8 @@
 from typing import Any
 
 from django.contrib.auth import authenticate, login, logout
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status, serializers
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.generics import GenericAPIView, RetrieveUpdateDestroyAPIView
@@ -13,6 +15,7 @@ from todolist.core.models import User
 from todolist.core.serializers import (
     CreateUserSerializer, ProfileSerializer, LoginSerializer, UpdatePasswordSerializer)
 
+@method_decorator (csrf_exempt, name='dispatch')
 class SignUpView(GenericAPIView):
     serializer_class = CreateUserSerializer
     def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
@@ -24,6 +27,7 @@ class SignUpView(GenericAPIView):
 
         return Response(ProfileSerializer(user).data, status=status.HTTP_201_CREATED)
 
+@method_decorator (csrf_exempt, name='dispatch')
 class LoginView(GenericAPIView):
     serializer_class = LoginSerializer
 
@@ -45,6 +49,7 @@ class LoginView(GenericAPIView):
 
         return Response(ProfileSerializer(user).data)
 
+@method_decorator (csrf_exempt, name='dispatch')
 class ProfileView(RetrieveUpdateDestroyAPIView):
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
@@ -56,6 +61,7 @@ class ProfileView(RetrieveUpdateDestroyAPIView):
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+@method_decorator (csrf_exempt, name='dispatch')
 class UpdatePasswordView(GenericAPIView):
     serializer_class = UpdatePasswordSerializer
     permission_classes = [IsAuthenticated]
