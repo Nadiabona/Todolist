@@ -32,9 +32,7 @@ class LoginView(GenericAPIView):
     serializer_class = LoginSerializer
 
     def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        serializer: Serializer = self.get_serializer(
-            data=request.data
-        )  # то, что прислали нам в запросе
+        serializer: Serializer = self.get_serializer(data=request.data)  # то, что прислали нам в запросе
         serializer.is_valid(raise_exception=True)
 
         user = authenticate(
@@ -73,7 +71,7 @@ class UpdatePasswordView(GenericAPIView):
         user: User = request.user
 
         if not user.check_password(serializer.validated_data['old_password']):
-            raise AuthenticationFailed('The rassword is not correct')
+            raise AuthenticationFailed('The password is not correct')
 
         user.set_password(serializer.validated_data['new_password'])
         user.save(update_fields = ['password'])

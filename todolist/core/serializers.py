@@ -44,6 +44,7 @@ class LoginSerializer(serializers.Serializer): #лучше через Model чт
     password = PasswordField(required=True)
 
 
+
 class UpdatePasswordSerializer(serializers.Serializer):
      old_password = PasswordField(required=True)
      new_password = PasswordField(required=True)
