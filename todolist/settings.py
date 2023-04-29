@@ -64,11 +64,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-    )
-}
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend')
 
 ROOT_URLCONF = "todolist.urls"
 
@@ -105,7 +101,6 @@ DATABASES = {
         "PORT": env.int("POSTGRES_PORT", default=5432),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

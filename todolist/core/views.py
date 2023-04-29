@@ -74,7 +74,7 @@ class UpdatePasswordView(GenericAPIView):
             raise AuthenticationFailed('The password is not correct')
 
         user.set_password(serializer.validated_data['new_password'])
-        user.save(update_fields = ['password'])
+        user.save(update_fields=['password'])
 
         return Response(serializer.data)
 
