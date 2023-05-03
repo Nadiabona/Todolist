@@ -24,7 +24,6 @@ ENV_PATH = BASE_DIR.joinpath(
 if ENV_PATH.is_file():
     env.read_envfile(ENV_PATH)
 
-
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'django-insecure-gv2xo$uks1%3#ox3_jo$h6w-cg9ra@o1%wc)0ej8&!ii+3%zf&'
 
@@ -48,6 +47,7 @@ INSTALLED_APPS = [
     "social_django",
     # Third party apps
     "rest_framework",
+   # "social_django",
     # First party apps
     "todolist.core",
 ]
@@ -64,7 +64,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend')
+AUTHENTICATION_BACKENDS = (('django.contrib.auth.backends.ModelBackend',))
 
 ROOT_URLCONF = "todolist.urls"
 
@@ -143,3 +143,18 @@ STATIC_ROOT = BASE_DIR.joinpath("static")
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+SOCIAL_AUTH_JSONFIELD_ENABLED = True #чтобы в базе хранил весь полученный json через  поле hson, есть не у всех баз, у postgres есть
+SOCIAL_AUTH_VK_OAUTH2_KEY = env('VK_OAUTH2_KEY')
+SOCIAL_AUTH_VK_OAUTH2_SECRET = env('VK_OAUTH2_SECRET')
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/logged-in/'
+SOCIAL_AUTH_USER_MODEL = 'core.User' #чтобы создавалась запись в core.user ( контакте был связан в нашим приожением)
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email'] #тогда будет подтягиваться email из вконтакте
+
+AUTHENTICATION_BACKENDS = (
+    "social_core.backends.vk.VKOAuth2",
+    'django.contrib.auth.backends.ModelBackend'
+)
+
