@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - branch-2
+      #- branch-3
 
 
 jobs:
@@ -37,7 +37,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
-          source: "deploy/*"
+          source: "deploy/*" #лучше указать со звездочкой, потому что спецсимовлы неизвестно как отрабатываются
           target: "diploma_12"
           strip_components: 1
 
