@@ -47,9 +47,10 @@ INSTALLED_APPS = [
     "social_django",
     # Third party apps
     "rest_framework",
-   # "social_django",
+    #"django_filters",
     # First party apps
     "todolist.core",
+    'todolist.goals',
 ]
 
 if DEBUG:
@@ -146,15 +147,23 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 SOCIAL_AUTH_JSONFIELD_ENABLED = True #чтобы в базе хранил весь полученный json через  поле hson, есть не у всех баз, у postgres есть
-SOCIAL_AUTH_VK_OAUTH2_KEY = env('VK_OAUTH2_KEY')
-SOCIAL_AUTH_VK_OAUTH2_SECRET = env('VK_OAUTH2_SECRET')
+SOCIAL_AUTH_JSONFIELD_CUSTOM = 'django.db.models.JSONField'
+SOCIAL_AUTH_VK_OAUTH2_KEY = env('SOCIAL_AUTH_VK_OAUTH2_KEY')
+SOCIAL_AUTH_VK_OAUTH2_SECRET = env('SOCIAL_AUTH_VK_OAUTH2_SECRET')
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
-SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/logged-in/'
+
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/login-error/'
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ["email", "photos", "notify"] #тогда будет подтягиваться email из вконтакте
+#SOCIAL_AUTH_VK_EXTRA_DATA = [('email', 'email')]
 SOCIAL_AUTH_USER_MODEL = 'core.User' #чтобы создавалась запись в core.user ( контакте был связан в нашим приожением)
-SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email'] #тогда будет подтягиваться email из вконтакте
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/logged-in/'
+
 
 AUTHENTICATION_BACKENDS = (
     "social_core.backends.vk.VKOAuth2",
     'django.contrib.auth.backends.ModelBackend'
 )
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination'
+}
