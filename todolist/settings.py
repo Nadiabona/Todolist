@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     "social_django",
     # Third party apps
     "rest_framework",
-    #"django_filters",
+    "django_filters",
+
     # First party apps
     "todolist.core",
     'todolist.goals',
