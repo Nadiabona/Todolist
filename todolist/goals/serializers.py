@@ -1,9 +1,10 @@
-from rest_framework import serializers
+from django.utils import timezone
 from rest_framework.exceptions import ValidationError, PermissionDenied
+from rest_framework import serializers
 
-from todolist.goals.models import GoalCategory
 from todolist.core.serializers import ProfileSerializer
-
+from todolist.goals.models import GoalCategory, Goal
+#from todolist.goals.admin import GoalComment
 
 class GoalCategoryCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())

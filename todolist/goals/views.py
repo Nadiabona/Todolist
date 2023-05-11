@@ -1,5 +1,6 @@
 from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
+
 from rest_framework import generics, permissions
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework import filters
@@ -8,7 +9,6 @@ from todolist.goals.models import GoalCategory, Goal
 from todolist.goals.serializers import GoalCategoryCreateSerializer, GoalCategorySerializer, GoalCreateSerializer, \
     GoalSerializer
 
-
 class GoalCategoryCreateView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated] #категорию может создавать только аудентифицированный пользователь
     serializer_class = GoalCategoryCreateSerializer
@@ -16,7 +16,7 @@ class GoalCategoryCreateView(generics.CreateAPIView):
 class GoalCategoryListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = GoalCategorySerializer
-    filter_backends = [ DjangoFilterBackend,OrderingFilter, SearchFilter]
+    filter_backends = [ filters.OrderingFilter, filters.SearchFilter]
     ordering_fields = ('title', 'created')
     ordering = ['title']
     search_field = ['title']
@@ -59,11 +59,9 @@ class GoalListView(generics.ListAPIView):
                 user=self.request.user, category__is_deleted=False)
             )
 
-
 class GoalView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = GoalSerializer
-
 
     def get_queryset(self):
         return(

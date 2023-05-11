@@ -1,7 +1,8 @@
 from django.db import models
-from django.utils import timezone
 
 from todolist.core.models import User
+
+
 
 class BaseModel(models.Model):
     created = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
@@ -34,7 +35,7 @@ class GoalCategory(BaseModel):
 class Goal(BaseModel):
     class Status(models.IntegerChoices):
         to_do = 1,'К выполнению'
-        in_process = 2, 'В процессе'
+        in_progress = 2, 'В процессе'
         done = 3, 'Выполнено'
         archived = 4, 'Архив'
 
