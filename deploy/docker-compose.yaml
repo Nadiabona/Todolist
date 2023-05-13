@@ -15,7 +15,7 @@ services:
       interval: 3s
 #делаем сборку
   api:
-    image: nadiabona/diploma_12:latest
+    image: nadiabona/diploma_12_1:latest
     env_file: .env
     depends_on:
       db:

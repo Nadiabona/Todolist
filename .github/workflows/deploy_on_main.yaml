@@ -24,7 +24,7 @@ jobs:
         with:
           push: true
           file: Dockerfile.prod
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/diploma_12:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/diploma_12_1:latest
 
 
   deploy:
@@ -39,7 +39,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           source: "deploy/*" #лучше указать со звездочкой, потому что спецсимовлы неизвестно как отрабатываются
-          target: "diploma_12"
+          target: "diploma_12_1"
           strip_components: 1
 
       - name: Run compose
@@ -49,7 +49,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            cd diploma_12
+            cd diploma_12_1
             echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker-compose pull
             echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker-compose up -d
       - name: Cleanup
