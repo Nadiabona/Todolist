@@ -72,6 +72,7 @@ class GoalCommentCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
+        model = GoalComment
         fields = '__all__'
 
     def validate_goal(self, value: Goal):
