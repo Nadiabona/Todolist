@@ -1,8 +1,6 @@
 from django.db import models
 
-from todolist.core.models import User
-
-
+from todolist.core.models import User, BaseModel
 
 class BaseModel(models.Model):
     created = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
@@ -19,11 +17,59 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True #делаем класс абстрактным он тогда не создает таблиц в базе данных
 
+class Board(BaseModel):
+    class Meta:
+        verbose_name = "Доска"
+        verbose_name_plural = "Доски"
+
+    title = models.CharField(verbose_name="Название", max_length=255)
+    is_deleted = models.BooleanField(verbose_name="Удалена", default=False)
+
+    def __str__(self):
+        return self.title
+
+
+class BoardParticipant(Board):
+    class Meta:
+        unique_together = ("board", "user")#сочетание уникальное, чтобы на одной и той же доске пользователь не смог иметь несоклько ролей
+        verbose_name = "Участник"
+        verbose_name_plural = "Участники"
+
+    class Role(models.IntegerChoices):
+        owner = 1, "Владелец"
+        writer = 2, "Редактор"
+        reader = 3, "Читатель"
+
+    editable_choices = Role.choices
+    editable_choices.pop(0)
+
+    board = models.ForeignKey(
+        Board,
+        verbose_name="Доска",
+        on_delete=models.PROTECT,
+        related_name="participants",
+    )
+    user = models.ForeignKey(
+        User,
+        verbose_name="Пользователь",
+        on_delete=models.PROTECT,
+        related_name="participants",
+    )
+    role = models.PositiveSmallIntegerField(
+        verbose_name="Роль", choices=Role.choices, default=Role.owner
+    )
+
+
+
+
 
 class GoalCategory(BaseModel):
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
+
+    # board = models.ForeignKey(Board, verbose_name="Доска", on_delete=models.PROTECT,
+    #                           related_name="categories", null=True)
 
     title = models.CharField(verbose_name="Название", max_length=255)
     user = models.ForeignKey(User, verbose_name="Автор", on_delete=models.PROTECT)
@@ -71,3 +117,5 @@ class GoalComment(BaseModel):
 
     def __str__(self) -> str:
         return self.text
+
+

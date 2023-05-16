@@ -5,6 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, permissions
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework import filters
+from rest_framework.pagination import LimitOffsetPagination
 
 from todolist.goals.permissions import GoalCommentPermission
 from todolist.goals.filters import GoalDateFilter
@@ -49,8 +50,10 @@ class GoalCreateView(generics.CreateAPIView):
     serializer_class = GoalCreateSerializer
 
 class GoalListView(generics.ListAPIView):
+    model = Goal
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = GoalCategorySerializer
+    serializer_class = GoalSerializer
+    pagination_class = LimitOffsetPagination
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_class = GoalDateFilter
     ordering_fields = ('title', 'created')
@@ -58,10 +61,7 @@ class GoalListView(generics.ListAPIView):
     search_field = ['title', 'description']
 
     def get_queryset(self):
-        return(
-            Goal.objects.seleсt_related('user').filter(
-                user=self.request.user, category__is_deleted=False)
-            )
+        return Goal.objects.filter(user=self.request.user)
 
 class GoalView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
