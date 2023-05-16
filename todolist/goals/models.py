@@ -1,6 +1,6 @@
 from django.db import models
 
-from todolist.core.models import User, BaseModel
+from todolist.core.models import User
 
 class BaseModel(models.Model):
     created = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
