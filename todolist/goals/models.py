@@ -17,51 +17,47 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True #делаем класс абстрактным он тогда не создает таблиц в базе данных
 
-class Board(BaseModel):
-    class Meta:
-        verbose_name = "Доска"
-        verbose_name_plural = "Доски"
-
-    title = models.CharField(verbose_name="Название", max_length=255)
-    is_deleted = models.BooleanField(verbose_name="Удалена", default=False)
-
-    def __str__(self):
-        return self.title
-
-
-class BoardParticipant(Board):
-    class Meta:
-        unique_together = ("board", "user")#сочетание уникальное, чтобы на одной и той же доске пользователь не смог иметь несоклько ролей
-        verbose_name = "Участник"
-        verbose_name_plural = "Участники"
-
-    class Role(models.IntegerChoices):
-        owner = 1, "Владелец"
-        writer = 2, "Редактор"
-        reader = 3, "Читатель"
-
-    editable_choices = Role.choices
-    editable_choices.pop(0)
-
-    board = models.ForeignKey(
-        Board,
-        verbose_name="Доска",
-        on_delete=models.PROTECT,
-        related_name="participants",
-    )
-    user = models.ForeignKey(
-        User,
-        verbose_name="Пользователь",
-        on_delete=models.PROTECT,
-        related_name="participants",
-    )
-    role = models.PositiveSmallIntegerField(
-        verbose_name="Роль", choices=Role.choices, default=Role.owner
-    )
-
-
-
-
+# class Board(BaseModel):
+#     class Meta:
+#         verbose_name = "Доска"
+#         verbose_name_plural = "Доски"
+#
+#     title = models.CharField(verbose_name="Название", max_length=255)
+#     is_deleted = models.BooleanField(verbose_name="Удалена", default=False)
+#
+#     def __str__(self):
+#         return self.title
+#
+#
+# class BoardParticipant(Board):
+#     class Meta:
+#         unique_together = ("board", "user")#сочетание уникальное, чтобы на одной и той же доске пользователь не смог иметь несоклько ролей
+#         verbose_name = "Участник"
+#         verbose_name_plural = "Участники"
+#
+#     class Role(models.IntegerChoices):
+#         owner = 1, "Владелец"
+#         writer = 2, "Редактор"
+#         reader = 3, "Читатель"
+#
+#     editable_choices = Role.choices
+#     editable_choices.pop(0)
+#
+#     board = models.ForeignKey(
+#         Board,
+#         verbose_name="Доска",
+#         on_delete=models.PROTECT,
+#         related_name="participants",
+#     )
+#     user = models.ForeignKey(
+#         User,
+#         verbose_name="Пользователь",
+#         on_delete=models.PROTECT,
+#         related_name="participants",
+#     )
+#     role = models.PositiveSmallIntegerField(
+#         verbose_name="Роль", choices=Role.choices, default=Role.owner
+#     )
 
 class GoalCategory(BaseModel):
     class Meta:

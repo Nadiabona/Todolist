@@ -49,11 +49,23 @@ class GoalCreateView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]  # категорию может создавать только аудентифицированный пользователь
     serializer_class = GoalCreateSerializer
 
+# class GoalListView(generics.ListAPIView):
+#     model = Goal
+#     permission_classes = [permissions.IsAuthenticated]
+#     serializer_class = GoalSerializer
+#     pagination_class = LimitOffsetPagination
+#     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+#     filterset_class = GoalDateFilter
+#     ordering_fields = ('title', 'created')
+#     ordering = ['title']
+#     search_field = ['title', 'description']
+#
+#     def get_queryset(self):
+#         return Goal.objects.filter(user=self.request.user)
+
 class GoalListView(generics.ListAPIView):
-    model = Goal
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = GoalSerializer
-    pagination_class = LimitOffsetPagination
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_class = GoalDateFilter
     ordering_fields = ('title', 'created')
@@ -61,7 +73,11 @@ class GoalListView(generics.ListAPIView):
     search_field = ['title', 'description']
 
     def get_queryset(self):
-        return Goal.objects.filter(user=self.request.user)
+        return(
+            Goal.objects.select_related('user').filter(
+                user=self.request.user)
+            )
+
 
 class GoalView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -69,8 +85,8 @@ class GoalView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return(
-            Goal.objects.seleсt_related('user').filter(user=self.request.user, category__is_deleted=False)
-            ).exclude(status=Goal.Status.archieved)
+            Goal.objects.select_related('user').filter(user=self.request.user, category__is_deleted=False)
+            ).exclude(status=Goal.Status.archived)
 
 
     def perform_destroy(self, instance: Goal):
@@ -90,6 +106,7 @@ class GoalCommentListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = GoalCommentSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter]
+    pagination_class = LimitOffsetPagination
     filterset_fields = ['goal']
     ordering = ['-created']
 
