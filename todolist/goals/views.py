@@ -43,7 +43,7 @@ class GoalCategoryView(generics.RetrieveUpdateDestroyAPIView):
             #если удалили категорию, надо удалить цели
             #транасакционно - это чтобы если вторая операция прошла, а первая нет, чтобы она тоже откатилась
             #о есть либо выполнялись обе либо никакая
-            instance.goals.update(status=Goal.Status.archieved)
+            instance.goals.update(status=Goal.Status.archived)
 
 class GoalCreateView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]  # категорию может создавать только аудентифицированный пользователь
@@ -75,7 +75,7 @@ class GoalListView(generics.ListAPIView):
     def get_queryset(self):
         return(
             Goal.objects.select_related('user').filter(
-                user=self.request.user)
+                user=self.request.user, category__is_deleted=False)
             )
 
 
@@ -106,18 +106,17 @@ class GoalCommentListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = GoalCommentSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    pagination_class = LimitOffsetPagination
     filterset_fields = ['goal']
     ordering = ['-created']
 
     def get_queryset(self) -> QuerySet[GoalComment]:
         return GoalComment.objects.select_related('user').filter(user_id=self.request.user.id)
 
+
 class GoalCommentView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [GoalCommentPermission]
     serializer_class = GoalCommentSerializer
     queryset = GoalComment.objects.select_related('user')
-
 
 
 
