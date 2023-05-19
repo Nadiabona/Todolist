@@ -13,7 +13,7 @@ class BoardPermission(IsAuthenticated):
         _filters: dict[str, Any] = {'user_id': request.user.id, 'board_id': obj.id}
         #если метод не safe то фильтруем еще и по роли
         if request.method not in SAFE_METHODS: #то есть если это get
-            _filters['role'] = Board.participant.role.owner
+            _filters['role'] = BoardParticipant.Role.owner
         #и плюс смотрим, есть ли он в таблице board participants
         return BoardParticipant.objects.filter(**_filters).exists()
 
@@ -34,7 +34,7 @@ class GoalCategoryPermission(IsAuthenticated):
         _filters: dict[str, Any] = {'user_id': request.user.id, 'board_id': obj.board_id}
         # если метод не safe то фильтруем еще и по роли
         if request.method not in SAFE_METHODS:  # то есть если это get
-            _filters['role'] = Board.participant.role.owner
+            _filters['role__in'] = [BoardParticipant.Role.owner, BoardParticipant.Role.writer]
         # и плюс смотрим, есть ли он в таблице board participants
         return BoardParticipant.objects.filter(**_filters).exists()
 

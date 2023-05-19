@@ -51,8 +51,10 @@ class GoalCategoryCreateView(generics.CreateAPIView):
     serializer_class = GoalCategoryCreateSerializer
 
 class GoalCategoryListView(generics.ListAPIView):
+    model = GoalCategory
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = GoalCategorySerializer
+    pagination_class = LimitOffsetPagination
     filter_backends = [ DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     filterset_fields = ['board']
     ordering_fields = ('title', 'created')
@@ -61,9 +63,10 @@ class GoalCategoryListView(generics.ListAPIView):
 
     def get_queryset(self):
         return GoalCategory.objects.filter(
-            board__participants=self.request.user).exclude(is_deleted=True)#отдаем только категории текущего пользователя
+            board__participants__user=self.request.user).exclude(is_deleted=True)#отдаем только категории текущего пользователя
 
 class GoalCategoryView(generics.RetrieveUpdateDestroyAPIView):
+    model = GoalCategory
     serializer_class = GoalCategorySerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -81,6 +84,7 @@ class GoalCategoryView(generics.RetrieveUpdateDestroyAPIView):
             instance.goals.update(status=Goal.Status.archived)
 
 class GoalCreateView(generics.CreateAPIView):
+    model = Goal
     permission_classes = [permissions.IsAuthenticated]  # категорию может создавать только аудентифицированный пользователь
     serializer_class = GoalCreateSerializer
 
