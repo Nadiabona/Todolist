@@ -19,8 +19,9 @@ class BoardCreateView(generics.CreateAPIView):
     serializer_class = BoardSerializer
 
     def perform_create(self, serializer: BoardSerializer):
+
         #переписыаем метод, делаем текущего пользователя владельцем доски
-        board = serializer.save()
+           # board = serializer.save()
         BoardParticipant.objects.create(user=self.request.user, board=serializer.save())
 
 class BoardListView(generics.ListAPIView):
@@ -134,14 +135,11 @@ class GoalCommentCreateView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = GoalCommentCreateSerializer
 
-    def create(self, request, *args, **kwargs):
-
-        return super().create(request, args, kwargs)
-
 
 class GoalCommentListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = GoalCommentSerializer
+    pagination_class = LimitOffsetPagination
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['goal']
     ordering = ['-created']
@@ -155,7 +153,9 @@ class GoalCommentListView(generics.ListAPIView):
 class GoalCommentView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [GoalCommentPermission]
     serializer_class = GoalCommentSerializer
-    queryset = GoalComment.objects.select_related('user')
 
-
+    def get_queryset(self):
+        return GoalComment.objects.filter(
+            goal__category__board__participants__user=self.request.user
+        )
 

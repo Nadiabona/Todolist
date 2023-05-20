@@ -49,13 +49,22 @@ class GoalPermission(IsAuthenticated):
         return BoardParticipant.objects.filter(**_filters).exists()
 
 
+# class GoalCommentPermission(IsAuthenticated):
+#     def has_object_permission(self, request: Request, view: GenericAPIView, obj: GoalComment) -> bool:
+#         _filters: dict[str, Any] = {'user_id': request.user.id, 'board_id': obj.goal.category.board_id}
+#         if request.method not in SAFE_METHODS:
+#             _filters['role__in'] = [BoardParticipant.Role.owner, BoardParticipant.Role.writer]
+
+        # return BoardParticipant.objects.filter(**_filters).exists()
+
 class GoalCommentPermission(IsAuthenticated):
-    def has_object_permission(self, request: Request, view: GenericAPIView, obj: GoalComment) -> bool:
-        _filters: dict[str, Any] = {'user_id': request.user.id, 'board_id': obj.goal.category.board_id}
-        if request.method not in SAFE_METHODS:
-            _filters['role__in'] = [BoardParticipant.Role.owner, BoardParticipant.Role.writer]
-
-        return BoardParticipant.objects.filter(**_filters).exists()
-
-
+    def has_object_permission(
+        self,
+        request: Request,
+        view: GenericAPIView,
+        obj: GoalComment
+) -> bool:
+        if request.method in SAFE_METHODS:
+            return True
+        return obj.user == request.user
 #
