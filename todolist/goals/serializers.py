@@ -148,19 +148,24 @@ class GoalCommentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = GoalComment
         fields = '__all__'
+        read_only_fields = ("id", "created", "updated", "user")
 
     def validate_goal(self, value: Goal):
         if value.status == Goal.Status.archived:
             raise ValidationError('Goal not found')
         if not BoardParticipant.objects.filter(
-                board_id=value.category.board.id,
-                user_id=self.context['request'].user.id,
+                board_id=value.category.board_id,
+               #user_id=self.context['request'].user_id,
+                user=self.context["request"].user,
                 role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
+
         ).exists():
             raise PermissionDenied
+        return value
 
 class GoalCommentSerializer(GoalCommentCreateSerializer):
     user = ProfileSerializer(read_only=True)
+    #goal= serializers.PrimaryKeyRelatedField(queryset=Goal.objects.all())
 
     class Meta:
         model = GoalComment

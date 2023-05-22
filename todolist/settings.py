@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     #созданные приложения
     'todolist.core',
     'todolist.goals',
+    'social_django',
+    #'todolist.bot,'
 ]
 
 if DEBUG:
@@ -166,3 +168,4 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
+BOT_TOKEN = env.str('BOT_TOKEN')
