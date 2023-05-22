@@ -47,7 +47,7 @@ class BoardWithParticipantsSerializer(BoardSerializer):
         request = self.context['request']
         # удаляем всех участников кроме владельца
         with transaction.atomic():
-            BoardParticipant.objects.filter(board=instance).exclude(user=requests.user).delete()
+            BoardParticipant.objects.filter(board=instance).exclude(user=request.user).delete()
             BoardParticipant.objects.bulk_create(
                 [
                     BoardParticipant(user=participant['user'], role=participant['role'], board=instance)

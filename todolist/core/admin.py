@@ -1,9 +1,9 @@
+from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
-from django.contrib import admin
-
 
 from todolist.core.models import User
+
 
 @admin.register(User)
 class CustomUserAdmin(
@@ -34,4 +34,6 @@ class CustomUserAdmin(
     )
 
 admin.site.unregister(Group)  # убираем из админки закладку Группы
+
+
 
