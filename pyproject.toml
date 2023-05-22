@@ -41,7 +41,6 @@ skip_glob = [
   'deploy',
 ]
 
-
 combine_as_imports = true
 combine_star = true
 known_first_party = 'todolist'

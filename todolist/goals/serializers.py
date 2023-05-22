@@ -112,9 +112,9 @@ class GoalCreateSerializer(serializers.ModelSerializer):
             raise ValidationError('Category not found')
 
         if not BoardParticipant.objects.filter(
-                board_id=value.board.id,
-                user_id=self.context['request'].user.id,
-                role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
+            board_id=value.board.id,
+            user_id=self.context['request'].user.id,
+            role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
         ).exists():
             raise PermissionDenied
         return value #0десь мы можем отвалидировать любое поле
