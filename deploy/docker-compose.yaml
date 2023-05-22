@@ -9,7 +9,7 @@ services:
       - diploma_pg_12_data_1:/var/lib/postgresql/data/ #здесь записываем в том данные
 
     healthcheck: #проверка того, что у нас приложение здорово, принимает пользователя и базу
-      test: pg_isready -U ${POSTGRES_USER} -d {POSTGRES_DB}
+      test: pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}
       timeout: 3s #даем время прогрузиться
       retries: 10
       interval: 3s
