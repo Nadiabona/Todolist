@@ -54,7 +54,7 @@ class GoalCategory(BaseModel):
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
     #для связи доски с категориями добавляем сюда доску
-    board = models.ForeignKey(Board,  on_delete=models.PROTECT,related_name="categories")
+    board = models.ForeignKey(Board,  on_delete=models.PROTECT,related_name="categories", null=True)
 
     title = models.CharField(verbose_name="Название", max_length=255)
     user = models.ForeignKey(User, verbose_name="Автор", on_delete=models.PROTECT)
@@ -102,5 +102,6 @@ class GoalComment(BaseModel):
 
     def __str__(self) -> str:
         return self.text
+
 
 

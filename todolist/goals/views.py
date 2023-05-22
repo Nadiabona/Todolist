@@ -20,8 +20,9 @@ class BoardCreateView(generics.CreateAPIView):
 
     def perform_create(self, serializer: BoardSerializer):
         with transaction.atomic():
-            BoardParticipant.objects.create(user=self.request.user)
             board=serializer.save()
+            BoardParticipant.objects.create(user=self.request.user, board=board)
+
 
         #переписыаем метод, делаем текущего пользователя владельцем доски
            # board = serializer.save()
@@ -138,6 +139,10 @@ class GoalCommentCreateView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = GoalCommentCreateSerializer
 
+    def perform_create(self, serializer):
+        print(serializer.validated_data)
+        serializer.save()
+
 
 class GoalCommentListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -154,11 +159,16 @@ class GoalCommentListView(generics.ListAPIView):
 
 
 class GoalCommentView(generics.RetrieveUpdateDestroyAPIView):
+    model = GoalComment
     permission_classes = [GoalCommentPermission]
     serializer_class = GoalCommentSerializer
+
+    # def get_queryset(self):
+    #     return GoalComment.objects.filter(
+    #         goal__category__board__participants__user=self.request.user
+    #     )
 
     def get_queryset(self):
         return GoalComment.objects.filter(
             goal__category__board__participants__user=self.request.user
         )
-
