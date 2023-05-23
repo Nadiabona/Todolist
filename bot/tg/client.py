@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 class TgClient:
-    def __init__(self, token: str = settings.BOT_TOKEN):
+    def __init__(self, token = settings.BOT_TOKEN):
         #берем токен бота
         self.token = token
 
@@ -27,7 +27,7 @@ class TgClient:
         data = self._get(method='sendMessage', chat_id=chat_id, text=text)
         return SendMessageResponse(**data)
 
-    def _get(self, method: str, **params):
+    def _get(self, method: str, **params) -> dict:
         url: str = self.get_url(method)
         response = requests.get(url, params=params)
         # print(response.status_code, response.json())
