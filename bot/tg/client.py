@@ -21,7 +21,7 @@ class TgClient:
             return GetUpdatesResponse(**data)
         except ValidationError as e:
             logger.error(e)
-            logger.info(data)
+            logger.warning(data)
             return GetUpdatesResponse(ok=False, result=[])
 
     def send_message(self, chat_id: int, text: str) -> SendMessageResponse:

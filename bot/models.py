@@ -1,5 +1,5 @@
 from django.db import models
-
+from uuid import uuid4
 from todolist.core.models import User
 
 
