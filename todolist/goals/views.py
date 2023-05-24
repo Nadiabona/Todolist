@@ -7,7 +7,7 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework import filters
 from rest_framework.pagination import LimitOffsetPagination
 
-from todolist.goals.permissions import GoalCommentPermission, BoardPermission
+from todolist.goals.permissions import GoalCommentPermission, BoardPermission, GoalCategoryPermission, GoalPermission
 from todolist.goals.filters import GoalDateFilter
 from todolist.goals.models import GoalCategory, Goal, GoalComment, BoardParticipant, Board
 from todolist.goals.serializers import GoalCategoryCreateSerializer, GoalCategorySerializer, GoalCreateSerializer, \
@@ -72,7 +72,7 @@ class GoalCategoryListView(generics.ListAPIView):
 class GoalCategoryView(generics.RetrieveUpdateDestroyAPIView):
     model = GoalCategory
     serializer_class = GoalCategorySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [GoalCategoryPermission]
 
     def get_queryset(self):
         """Возвращает все категории пользователя из досок, где он является участником, кроме удалённых"""
@@ -122,7 +122,7 @@ class GoalListView(generics.ListAPIView):
 
 
 class GoalView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [GoalPermission]
     serializer_class = GoalSerializer
 
     def get_queryset(self):
@@ -131,7 +131,7 @@ class GoalView(generics.RetrieveUpdateDestroyAPIView):
         )
 
     def perform_destroy(self, instance: Goal):
-        instance.status = Goal.status.archived
+        instance.status = Goal.Status.archived
         instance.save(update_fields= ('status',))
 
 class GoalCommentCreateView(generics.CreateAPIView):
