@@ -19,8 +19,9 @@ class TgClient:
         data = self._get(method='getUpdates', offset=offset, timeout=timeout)
         try:
             return GetUpdatesResponse(**data)
-        except ValidationError:
-            logger.warning(data)
+        except ValidationError as e:
+            logger.error(e)
+            logger.info(data)
             return GetUpdatesResponse(ok=False, result=[])
 
     def send_message(self, chat_id: int, text: str) -> SendMessageResponse:
