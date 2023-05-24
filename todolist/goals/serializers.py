@@ -73,19 +73,19 @@ class GoalCategoryCreateSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ("id", "created", "updated", "user", "is_deleted")
 
-        def validate_board(self, board : Board)-> Board:
-            #не стерта ли доска
-            if board.is_deleted:
-                raise ValidationError('Board is deleted')
-            #проверяем, что пользователь имеет право создавать категорию на доске
-            if not BoardParticipant.objects.filter(
-                    board_id = board.id,
-                    user_id = self.context['request'].user.id,
-                    role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer, ]
-             ).exists():
-                raise PermissionDenied
+    def validate_board(self, board : Board)-> Board:
+        #не стерта ли доска
+        if board.is_deleted:
+            raise ValidationError('Board is deleted')
+        #проверяем, что пользователь имеет право создавать категорию на доске
+        if not BoardParticipant.objects.filter(
+                board_id = board.id,
+                user_id = self.context['request'].user.id,
+                role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer, ]
+         ).exists():
+            raise PermissionDenied
 
-            return board
+        return board
 
 
 

@@ -7,7 +7,7 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework import filters
 from rest_framework.pagination import LimitOffsetPagination
 
-from todolist.goals.permissions import GoalCommentPermission, BoardPermission
+from todolist.goals.permissions import GoalCommentPermission, BoardPermission, GoalCategoryPermission, GoalPermission
 from todolist.goals.filters import GoalDateFilter
 from todolist.goals.models import GoalCategory, Goal, GoalComment, BoardParticipant, Board
 from todolist.goals.serializers import GoalCategoryCreateSerializer, GoalCategorySerializer, GoalCreateSerializer, \
@@ -72,7 +72,7 @@ class GoalCategoryListView(generics.ListAPIView):
 class GoalCategoryView(generics.RetrieveUpdateDestroyAPIView):
     model = GoalCategory
     serializer_class = GoalCategorySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [GoalCategoryPermission]
 
     def get_queryset(self):
         """Возвращает все категории пользователя из досок, где он является участником, кроме удалённых"""
@@ -92,20 +92,6 @@ class GoalCreateView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]  # категорию может создавать только аудентифицированный пользователь
     serializer_class = GoalCreateSerializer
 
-# class GoalListView(generics.ListAPIView):
-#     model = Goal
-#     permission_classes = [permissions.IsAuthenticated]
-#     serializer_class = GoalSerializer
-#     pagination_class = LimitOffsetPagination
-#     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-#     filterset_class = GoalDateFilter
-#     ordering_fields = ('title', 'created')
-#     ordering = ['title']
-#     search_field = ['title', 'description']
-#
-#     def get_queryset(self):
-#         return Goal.objects.filter(user=self.request.user)
-
 class GoalListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = GoalSerializer
@@ -122,7 +108,7 @@ class GoalListView(generics.ListAPIView):
 
 
 class GoalView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [GoalPermission]
     serializer_class = GoalSerializer
 
     def get_queryset(self):
@@ -131,7 +117,7 @@ class GoalView(generics.RetrieveUpdateDestroyAPIView):
         )
 
     def perform_destroy(self, instance: Goal):
-        instance.status = Goal.status.archived
+        instance.status = Goal.Status.archived
         instance.save(update_fields= ('status',))
 
 class GoalCommentCreateView(generics.CreateAPIView):
@@ -140,7 +126,7 @@ class GoalCommentCreateView(generics.CreateAPIView):
     serializer_class = GoalCommentCreateSerializer
 
     def perform_create(self, serializer):
-        print(serializer.validated_data)
+
         serializer.save()
 
 
@@ -162,11 +148,6 @@ class GoalCommentView(generics.RetrieveUpdateDestroyAPIView):
     model = GoalComment
     permission_classes = [GoalCommentPermission]
     serializer_class = GoalCommentSerializer
-
-    # def get_queryset(self):
-    #     return GoalComment.objects.filter(
-    #         goal__category__board__participants__user=self.request.user
-    #     )
 
     def get_queryset(self):
         return GoalComment.objects.filter(
