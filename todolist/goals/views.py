@@ -92,20 +92,6 @@ class GoalCreateView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]  # категорию может создавать только аудентифицированный пользователь
     serializer_class = GoalCreateSerializer
 
-# class GoalListView(generics.ListAPIView):
-#     model = Goal
-#     permission_classes = [permissions.IsAuthenticated]
-#     serializer_class = GoalSerializer
-#     pagination_class = LimitOffsetPagination
-#     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-#     filterset_class = GoalDateFilter
-#     ordering_fields = ('title', 'created')
-#     ordering = ['title']
-#     search_field = ['title', 'description']
-#
-#     def get_queryset(self):
-#         return Goal.objects.filter(user=self.request.user)
-
 class GoalListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = GoalSerializer
@@ -140,7 +126,7 @@ class GoalCommentCreateView(generics.CreateAPIView):
     serializer_class = GoalCommentCreateSerializer
 
     def perform_create(self, serializer):
-        print(serializer.validated_data)
+
         serializer.save()
 
 
@@ -162,11 +148,6 @@ class GoalCommentView(generics.RetrieveUpdateDestroyAPIView):
     model = GoalComment
     permission_classes = [GoalCommentPermission]
     serializer_class = GoalCommentSerializer
-
-    # def get_queryset(self):
-    #     return GoalComment.objects.filter(
-    #         goal__category__board__participants__user=self.request.user
-    #     )
 
     def get_queryset(self):
         return GoalComment.objects.filter(
