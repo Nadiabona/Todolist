@@ -58,9 +58,9 @@ class Command(BaseCommand):
         elif msg == '/cancel':
             clients.pop(tg_user.chat_id, None)
 
-        elif tg_user in clients:
-            callback = clients[tg_user]['next_handler']
-            callback(tg_user, msg, **clients[tg_user]['data'])
+        elif tg_user.chat_id in clients:
+            callback = clients[tg_user.chat_id]['next_handler']
+            callback(tg_user, msg, **clients[tg_user.chat_id]['data'])
 
 
 
@@ -78,7 +78,10 @@ class Command(BaseCommand):
 
         else:
             clients[tg_user.chat_id] = {'data': {}, 'next_handler': self.save_category}
-            self.tg_client.send_message(chat_id=msg.chat.id, text=f'Select a category \n{categories}')
+            categories = '\n'.join(categories)
+            # self.tg_client.send_message(chat_id=msg.chat.id, text=f'Select a category \n.join(categories))
+            self.tg_client.send_message(chat_id=msg.chat.id, text=f'Select a category: \n{categories}')
+
 
     def save_category(self, tg_user, msg, **kwargs):
         # Проверяем что категория существует
@@ -88,17 +91,14 @@ class Command(BaseCommand):
             self.tg_client.send_message(chat_id=msg.chat.id, text='Category not found')
 
         else:
-            self.tg_client.send_message(chat_id=msg.chat.id, text='Enter goal title')
+            self.tg_client.send_message(chat_id=msg.chat.id, text='Enter title of a new goal')
             clients[tg_user.chat_id]={'data': {'category': category}, 'next_handler': self.create_goal}
 
     def create_goal(self, tg_user, msg, **kwargs):
         category = kwargs['category']
-        Goal.objects.create(
-            title=msg.text,
-            category=category,
-            user=tg_user.user)
+        Goal.objects.create(title=msg.text, category=category, user=tg_user.user)
 
-        self.tg_client.send_message(chat_id=msg.chat.id, text=f'Goal created on category №{category}')
+        self.tg_client.send_message(chat_id=msg.chat.id, text=f'Goal created')
 
         clients.pop(tg_user.chat_id, None)
 
