@@ -23,6 +23,13 @@ services:
 
     volumes:
       - django_static:/opt/static
+
+  bot:
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+
   frontend:
     image: sermalenk/skypro-front:lesson-38
     ports:

@@ -1,6 +1,7 @@
 **
 
 !core
+!bot
 !todolist
 !entrypoint.sh
 !manage.py

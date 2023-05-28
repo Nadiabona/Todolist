@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 class Chat(BaseModel):
@@ -6,7 +8,7 @@ class Chat(BaseModel):
 
 class Message(BaseModel):
     chat: Chat
-    text: str | None = None
+    text: Optional[str] = None
 
 
 class UpdateObj(BaseModel):
