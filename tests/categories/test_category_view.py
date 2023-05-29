@@ -1,0 +1,52 @@
+import pytest
+from django.urls import reverse
+from rest_framework import status
+
+@pytest.mark.django_db()
+class TestCategoryRetrieveView:
+    @pytest.fixture(autouse=True)
+    def setup(self, board_participant):
+        self.url = self.get_url(board_participant.board_id)
+
+    @staticmethod
+    def get_url(category_pk: int) -> str:
+        return reverse('goals:goal-category', kwargs={'pk': category_pk})
+
+    def test_auth_required(self, client):
+        """Неавторизованный пользователь не может просматривать категории ."""
+        response = client.get(self.url)
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+#
+    def test_failed_to_retrieve_deleted_category(self, auth_client, goal_category):
+        """Пользователь не может просматривать удалённые категории."""
+        goal_category.is_deleted = True
+        goal_category.save()
+
+        response = auth_client.get(self.url)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+#
+    def test_failed_to_retrieve_foreign_cdtegory(self, client, user_factory):
+        """Пользователь не может просматривать категории досок, где он не является участником."""
+        another_user = user_factory.create()
+        client.force_login(another_user)
+
+        response = client.get(self.url)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+#
+#
+@pytest.mark.django_db()
+class TestCategoryDestroyView:
+    @pytest.fixture(autouse=True)
+    def setup(self, goal_category):
+        self.url = self.get_url(goal_category.pk)
+
+    @staticmethod
+    def get_url(category_pk: int) -> str:
+        return reverse('goals:goal-category', kwargs={'pk': category_pk})
+
+    def test_auth_required(self, client):
+        """Неавторизованный пользователь не может удалять категории."""
+        response = client.delete(self.url)
+        assert response.status_code == status.HTTP_403_FORBIDDEN

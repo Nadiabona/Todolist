@@ -1,7 +1,7 @@
 import factory
 from django.utils import timezone
 from pytest_factoryboy import register
-from core.models import User
+from todolist.core.models import User
 from todolist.goals.models import Board, BoardParticipant, GoalCategory
 
 
@@ -18,7 +18,6 @@ class UserFactory(factory.django.DjangoModelFactory):
         return cls._get_manager(model_class).create_user(*args, **kwargs)
         # можно User.objects.create_user(*args, **kwargs)
 
-
 class DatesFactoryMixin(factory.django.DjangoModelFactory):
     created = factory.LazyFunction(timezone.now)
     updated = factory.LazyFunction(timezone.now)
@@ -34,6 +33,7 @@ class BoardFactory(DatesFactoryMixin):
     class Meta:
         model = Board
 
+    #Для создания доски, которая принадлежит другому пользователю
     @factory.post_generation
     def with_owner(self, create, owner, **kwargs):
         if owner:
@@ -57,3 +57,12 @@ class CategoryFactory(DatesFactoryMixin):
 
     class Meta:
         model = GoalCategory
+
+# @register
+# class GoalFactory(DatesFactoryMixin):
+#     title = factory.Faker('sentence')
+#     user = factory.SubFactory(UserFactory)
+#     goal = factory.SubFactory(BoardFactory)
+#
+#     class Meta:
+#         model = Goal
