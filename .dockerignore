@@ -5,5 +5,4 @@
 !todolist
 !entrypoint.sh
 !manage.py
-!poetry.lock
-!pyproject.toml
+!requirements.txt

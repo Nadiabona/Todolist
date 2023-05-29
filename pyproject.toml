@@ -1,50 +1,7 @@
-[tool.poetry]
-name = "todolist"
-version = "0.1.0"
-description = ""
-authors = ["Nadiabona <Nadinkotikoff@gmail.com>"]
-readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.9"
-django = "4.0.1"
-
-django-extensions="3.2.1"
-envparse = "^0.2.0"
-psycopg2-binary = "^2.9.5"
-isort = "^5.12.0"
-gunicorn = "^20.1.0"
-djangorestframework = "^3.14.0"
-black = "^23.3.0"
-social-auth-app-django = "^5.2.0"
-django-filter = "^23.2"
-pydantic = "^1.10.7"
-
-
-[tool.poetry.group.dev.dependencies]
-django-extensions = "^3.2.1"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.isort]
-multi_line_output = 3
-line_length = 88
-include_trailing_comma = true
-use_parentheses = true
-
-skip_glob = [
-  '**/migratioins/**',
-  'git',
-  'github',
-  '.venv',
-  'deploy',
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = 'todolist.settings'
+python_files = [
+    'tests.py',
+    'test_*.py',
+    '*_tests.py'
 ]
-
-combine_as_imports = true
-combine_star = true
-known_first_party = 'todolist'
-
-[tool.black]
-line_length = 88
