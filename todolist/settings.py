@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'todolist.core',
     'todolist.goals',
     'social_django',
-    #'bot',
+    'bot',
 ]
 
 if DEBUG:
